@@ -17,7 +17,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-inventree = "^0.13.1"
+inventree = "^0.17.1"
 digikey-api = "^1.0.0"
 
 
