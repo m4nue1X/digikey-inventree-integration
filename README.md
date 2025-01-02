@@ -34,7 +34,8 @@ URL=<URL to the inventree instance>
 USER=
 PASSWORD=
 ```
-
+**IMPORTANT:** We're using "OAuth 2.0: 3 Legged Flow" for authenticating against the DigiKey API. For this to work
+the callback URL of your DigiKey application must be `https://localhost:8139/digikey_callback`.
 
 ## Usage
 
