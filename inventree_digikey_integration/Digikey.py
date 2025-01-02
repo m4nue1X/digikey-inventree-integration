@@ -34,6 +34,8 @@ class DigiPart:
             if len(raw_param.value) > 0 and raw_param.value != '-':
                 cleaned_param = (raw_param.parameter, raw_param.value)
                 self.parameters.append(cleaned_param)
+            if not self.manufacturer and raw_param.parameter == "Mfr":
+                self.manufacturer = raw_param.value
         for raw_media_link in self.raw_value.media_links:
             if raw_media_link.media_type == "Datasheets":
                 self.datasheets.append(raw_media_link.url)
