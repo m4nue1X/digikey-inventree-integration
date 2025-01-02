@@ -31,8 +31,9 @@ class DigiPart:
         self.digi_part_num = self.raw_value.digi_key_part_number
         self.picture = self.raw_value.primary_photo
         for raw_param in self.raw_value.parameters:
-            cleaned_param = (raw_param.parameter, raw_param.value)
-            self.parameters.append(cleaned_param)
+            if len(raw_param.value) > 0 and raw_param.value != '-':
+                cleaned_param = (raw_param.parameter, raw_param.value)
+                self.parameters.append(cleaned_param)
         for raw_media_link in self.raw_value.media_links:
             if raw_media_link.media_type == "Datasheets":
                 self.datasheets.append(raw_media_link.url)
