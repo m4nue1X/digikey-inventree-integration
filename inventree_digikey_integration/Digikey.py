@@ -20,6 +20,8 @@ class DigiPart:
         self.parameters = []
         self.picture = None
         self.thumbnail = None
+        self.datasheets = []
+
 
     def injest_api(self, prompt=True):
         self.manufacturer = self.raw_value.manufacturer.value
@@ -31,6 +33,9 @@ class DigiPart:
         for raw_param in self.raw_value.parameters:
             cleaned_param = (raw_param.parameter, raw_param.value)
             self.parameters.append(cleaned_param)
+        for raw_media_link in self.raw_value.media_links:
+            if raw_media_link.media_type == "Datasheets":
+                self.datasheets.append(raw_media_link.url)
 
         if prompt:
             self.prompt_part_name()

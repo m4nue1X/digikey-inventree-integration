@@ -1,5 +1,6 @@
 from inventree.company import SupplierPart, Company, ManufacturerPart
-from inventree.part import Part, PartCategory
+from inventree.part import Part, PartCategory, ParameterTemplate, Parameter
+from inventree.base import Attachment
 
 from .Digikey import DigiPart
 from .ImageManager import ImageManager
@@ -82,6 +83,9 @@ def create_inventree_part(dkpart: DigiPart, config: ConfigReader):
             "purchaseable": 1,
         },
     )
+
+    add_parameters(dkpart, part, config)
+    add_datasheet(dkpart, part)
     upload_picture(dkpart, part)
     return part
 
@@ -136,5 +140,27 @@ def create_manufacturer(name: str, config: ConfigReader, is_supplier: bool = Fal
 def upload_picture(dkpart: DigiPart, invPart):
     if dkpart.picture is not None:
         img_file = ImageManager.get_image(dkpart.picture)
-        invPart.uploadImage(img_file)
+        if not img_file or img_file == -1:
+            print("Unable to get image")
+        else:
+            invPart.uploadImage(img_file)
         ImageManager.clean_cache()
+
+def add_datasheet(dkpart: DigiPart, invPart):
+    for datasheet in dkpart.datasheets:
+        invPart.addLinkAttachment(datasheet, comment="Datasheet")
+
+def add_parameters(dkpart: DigiPart, invPart, config: ConfigReader):
+    for parameter in dkpart.parameters:
+        parameter_templates = ParameterTemplate.list(
+            config.inventree_api, name=parameter[0]
+        )
+        if parameter_templates:
+            Parameter.create(
+                config.inventree_api,
+                {
+                    "data": parameter[1],
+                    "template": parameter_templates[0].getPkValue(),
+                    "part": invPart.getPkValue(),
+                }
+            )

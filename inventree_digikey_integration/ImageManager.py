@@ -79,18 +79,18 @@ class ImageManager:
         # Get the response
         response = conn.getresponse()
 
-        if not response.status == 200:
+        if response.status == 302 and 'Location' in response.headers.keys():
+            return cls._download_image(response.headers.get('Location'))
+        elif response.status == 200:
+            filename = cls._filename_generator()
+            filepath = cls.cache_path / filename
+            with open(filepath, "wb") as handler:
+                while True:
+                    chunk = response.read(1024)
+                    if not chunk:
+                        break
+                    handler.write(chunk)
+            return str(filepath)
+        else:
             print(f"ERROR: Request code is {response.status}")
             return -1
-
-        filename = cls._filename_generator()
-
-        filepath = cls.cache_path / filename
-        with open(filepath, "wb") as handler:
-            while True:
-                chunk = response.read(1024)
-                if not chunk:
-                    break
-                handler.write(chunk)
-
-        return str(filepath)
